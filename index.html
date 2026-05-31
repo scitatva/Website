@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciTatva Insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #040d12;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(52,211,153,0.35);
+      --emerald: #34d399;
+      --emerald-dim: #10b981;
+      --cyan: #22d3ee;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --faint: #475569;
+      --radius-card: 1.5rem;
+      --radius-pill: 9999px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 15%, rgba(16,185,129,.13) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 35% at 85% 5%, rgba(6,182,212,.11) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 90%, rgba(59,130,246,.09) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .nav-logo {
+      height: 64px;
+      width: auto;
+      display: block;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .nav-logo:hover {
+      opacity: .85;
+      transform: scale(1.03);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(4,13,18,0.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      color: var(--emerald);
+      letter-spacing: -.01em;
+      line-height: 1.1;
+    }
+
+    .logo-tag {
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-weight: 300;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.45rem 1rem;
+      border-radius: 0.6rem;
+      letter-spacing: .01em;
+      transition: color .2s, background .2s;
+    }
+
+    .nav-links a:hover { color: var(--text); background: var(--surface-hover); }
+
+    .btn-nav {
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius-pill);
+      background: var(--emerald);
+      color: #040d12;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background .2s, transform .15s;
+      flex-shrink: 0;
+    }
+
+    .btn-nav:hover { background: #6ee7b7; transform: translateY(-1px); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      flex-shrink: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1rem 1.25rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: rgba(4,13,18,0.95);
+    }
+
+    .mobile-menu a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.65rem 0.75rem;
+      border-radius: 0.5rem;
+      transition: color .2s, background .2s;
+    }
+
+    .mobile-menu a:hover { color: var(--text); background: var(--surface-hover); }
+
+    .mobile-menu .btn-mobile {
+      margin-top: 0.5rem;
+      text-align: center;
+      background: var(--emerald);
+      color: #040d12;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: clamp(3rem, 10vw, 7rem) 1.25rem clamp(2.5rem, 8vw, 5rem);
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.35rem 1rem;
+      font-size: 0.78rem;
+      color: var(--emerald);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 1.75rem;
+    }
+
+    .hero-badge::before {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.7); }
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.6rem, 8vw, 5.5rem);
+      line-height: 1.06;
+      letter-spacing: -.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--emerald);
+    }
+
+    .hero-sub {
+      font-size: clamp(1.05rem, 3vw, 1.5rem);
+      color: var(--muted);
+      margin: 1.1rem auto 0.85rem;
+      font-weight: 300;
+      max-width: 600px;
+    }
+
+    .hero-desc {
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
+      color: var(--faint);
+      max-width: 680px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+    }
+
+    .btn-primary {
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-pill);
+      background: var(--emerald);
+      color: #040d12;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      box-shadow: 0 0 40px rgba(52,211,153,.3);
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+
+    .btn-primary:hover { background: #6ee7b7; transform: translateY(-2px); box-shadow: 0 0 60px rgba(52,211,153,.45); }
+
+    .btn-ghost {
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background .2s, border-color .2s, transform .15s;
+    }
+
+    .btn-ghost:hover { background: var(--surface-hover); border-color: rgba(255,255,255,.2); transform: translateY(-2px); }
+
+    /* Hero stats strip */
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1px;
+      margin-top: 3.5rem;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .stat {
+      flex: 1;
+      min-width: 130px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      background: var(--bg);
+    }
+
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--emerald);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--faint);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: clamp(3rem, 8vw, 5rem) 1.25rem;
+    }
+
+    .section-tag {
+      font-size: 0.72rem;
+      color: var(--emerald);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      letter-spacing: -.02em;
+      line-height: 1.1;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-lead {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 500px;
+    }
+
+    .section-header {
+      margin-bottom: 2.5rem;
+    }
+
+    /* centered variant */
+    .section-header.center { text-align: center; }
+    .section-header.center .section-lead { margin: 0 auto; }
+
+    /* ── SERVICES GRID ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 1.75rem;
+      transition: border-color .25s, background .25s, transform .2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+      transform: translateY(-3px);
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.25rem;
+      line-height: 1;
+    }
+
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      letter-spacing: -.01em;
+    }
+
+    .card-text {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    /* ── VISION BLOCK ── */
+    .vision-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: clamp(2rem, 6vw, 3.5rem);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vision-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(52,211,153,.07), transparent 70%);
+      pointer-events: none;
+    }
+
+    .vision-quote {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.05rem, 3vw, 1.45rem);
+      line-height: 1.65;
+      color: var(--text);
+      max-width: 860px;
+      margin: 1rem auto 1.5rem;
+      font-style: italic;
+    }
+
+    .vision-tagline {
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── ABOUT ── */
+    .about-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: clamp(2rem, 6vw, 3.5rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--emerald-dim), var(--cyan), transparent);
+    }
+
+    .about-block p {
+      color: var(--muted);
+      font-size: 0.97rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .about-block p:last-child { margin-bottom: 0; }
+
+    .about-block strong { color: var(--text); font-weight: 600; }
+
+    .about-block em { color: var(--emerald); font-style: normal; }
+
+    /* ── TEAM ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+      gap: 1.25rem;
+    }
+
+    .team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 1.75rem;
+      transition: border-color .25s, background .25s, transform .2s;
+    }
+
+    .team-card:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+      transform: translateY(-3px);
+    }
+
+    .team-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-dim), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: #040d12;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .team-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: -.01em;
+      margin-bottom: 0.25rem;
+      line-height: 1.25;
+    }
+
+    .team-role {
+      font-size: 0.75rem;
+      color: var(--emerald);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .team-bio {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: clamp(3rem, 8vw, 5rem) 1.25rem;
+      text-align: center;
+    }
+
+    .contact-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: clamp(2.25rem, 6vw, 3.5rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 100%, rgba(52,211,153,.06), transparent 65%);
+      pointer-events: none;
+    }
+
+    .contact-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.7rem, 5vw, 2.4rem);
+      margin-bottom: 0.75rem;
+      letter-spacing: -.02em;
+    }
+
+    .contact-lead {
+      color: var(--muted);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .email-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: var(--radius-pill);
+      background: rgba(52,211,153,.1);
+      border: 1px solid rgba(52,211,153,.25);
+      color: var(--emerald);
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background .2s, border-color .2s, transform .15s;
+      word-break: break-all;
+    }
+
+    .email-pill:hover { background: rgba(52,211,153,.18); border-color: rgba(52,211,153,.5); transform: translateY(-2px); }
+
+    .email-pill svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.25rem;
+      text-align: center;
+    }
+
+    .footer-quote {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: var(--emerald);
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--faint);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .btn-nav-desktop { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-stats { flex-direction: column; gap: 0; }
+      .stat { min-width: unset; width: 100%; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+
+      .btn-primary, .btn-ghost { width: 100%; text-align: center; }
+      .hero-cta { flex-direction: column; align-items: center; }
+      .hero-cta .btn-primary, .hero-cta .btn-ghost { max-width: 320px; }
+
+      .services-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .logo-tag { display: none; }
+      .hero { padding-top: 2.5rem; }
+      .card { padding: 1.25rem; }
+      .team-card { padding: 1.25rem; }
+      .vision-block { padding: 1.75rem 1.25rem; }
+      .about-block { padding: 1.75rem 1.25rem; }
+      .contact-block { padding: 1.75rem 1.25rem; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-mesh" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo" style="text-decoration:none;">
+      <img src="scitative-logo.png" alt="SciTatva Insights" class="nav-logo" />
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#vision">Vision</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#team">Team</a></li>
+    </ul>
+
+    <a href="#contact" class="btn-nav btn-nav-desktop">Contact Us</a>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" role="navigation">
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#vision" class="mobile-link">Vision</a>
+    <a href="#about" class="mobile-link">About</a>
+    <a href="#team" class="mobile-link">Team</a>
+    <a href="#contact" class="mobile-link btn-mobile">Contact Us</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge fade-up">Research-Driven Consultancy</div>
+  <h1 class="fade-up" style="transition-delay:.08s">
+    SciTatva <em>Insights</em>
+  </h1>
+  <p class="hero-sub fade-up" style="transition-delay:.16s">
+    Bridging Science, Technology, and Real-World Impact
+  </p>
+  <p class="hero-desc fade-up" style="transition-delay:.22s">
+    Delivering high-end, science-backed solutions across biotechnology, healthcare, and environmental health — translating advanced research into practical, scalable applications.
+  </p>
+  <div class="hero-cta fade-up" style="transition-delay:.28s">
+    <a href="#services" class="btn-primary">Explore Services</a>
+    <a href="#vision" class="btn-ghost">Our Vision</a>
+  </div>
+
+
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICES -->
+<section id="services" class="section">
+  <div class="section-header center fade-up">
+    <p class="section-tag">What We Do</p>
+    <h2 class="section-title">Our Focus Areas</h2>
+    <p class="section-lead">Where scientific rigor meets practical implementation.</p>
+  </div>
+
+  <div class="services-grid">
+    <div class="card fade-up" style="transition-delay:.05s">
+      <div class="card-icon">🧬</div>
+      <h3 class="card-title">Nanoparticle Drug Delivery</h3>
+      <p class="card-text">Guidance on designing liposomes, polymeric nanoparticles, and lipid-based carriers to enhance efficacy and reduce toxicity. Our approach covers particle size, surface charge, drug loading, and controlled release — supporting scalable, regulatory-compliant nanomedicines for oncology and chronic diseases.</p>
+    </div>
+
+    <div class="card fade-up" style="transition-delay:.1s">
+      <div class="card-icon">⚠️</div>
+      <h3 class="card-title">Nanoparticles & VOC Health</h3>
+      <p class="card-text">Risk analysis, exposure studies, and mitigation for safer environments. We integrate real-time monitoring of airborne nanoparticles alongside VOC sensors to detect species like formaldehyde, benzene, and toluene — deploying advanced filtration to protect workers, patients, and researchers.</p>
+    </div>
+
+    <div class="card fade-up" style="transition-delay:.15s">
+      <div class="card-icon">🏭</div>
+      <h3 class="card-title">Biopharma Contamination Control</h3>
+      <p class="card-text">Science-led contamination control addressing microbial, particulate, and cross-contamination risks. Aligned with cGMP, EU GMP Annex 1, and ISO 14644 standards — ensuring aseptic environments from cell culture to fill-finish operations.</p>
+    </div>
+
+    <div class="card fade-up" style="transition-delay:.2s">
+      <div class="card-icon">🏥</div>
+      <h3 class="card-title">Surgical Emissions</h3>
+      <p class="card-text">Safer operating rooms through evidence-based smoke and aerosol mitigation. We provide advanced filtration and ventilation strategies to capture harmful airborne contaminants at the source, protecting both healthcare workers and patients.</p>
+    </div>
+
+    <div class="card fade-up" style="transition-delay:.25s">
+      <div class="card-icon">🌬️</div>
+      <h3 class="card-title">IVF Air Quality</h3>
+      <p class="card-text">Optimized laboratory environments for better IVF outcomes. Real-time particle and VOC monitoring with HEPA, ULPA, and activated carbon filtration — integrated with pressurized positive airflow and laminar flow workstations validated to ISO 5 and ESHRE standards.</p>
+    </div>
+
+    <div class="card fade-up" style="transition-delay:.3s">
+      <div class="card-icon">🔬</div>
+      <h3 class="card-title">Research Translation</h3>
+      <p class="card-text">Turning cutting-edge science into scalable real-world solutions. We bridge the gap between advanced laboratory discoveries and practical, deployable applications — accelerating the journey from research to measurable impact.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VISION -->
+<section id="vision" class="section">
+  <div class="vision-block fade-up">
+    <p class="section-tag">Vision</p>
+    <p class="vision-quote">
+      "Trusted global partner in science-led innovation — connecting the right technologies and solutions to the right people through deep scientific expertise and a client-centric approach."
+    </p>
+    <p class="vision-tagline">Driving innovation that improves human health and environmental safety.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="section-header fade-up">
+    <p class="section-tag">About Us</p>
+    <h2 class="section-title">Founded by Dr. Lakshmi Yeruva</h2>
+  </div>
+
+  <div class="about-block fade-up">
+    <p>
+      SciTatva was founded by <strong>Dr. Lakshmi Yeruva</strong>, bringing together deep scientific expertise and a shared vision of translating advanced research into meaningful real-world impact.
+    </p>
+    <p>
+      <strong>Dr. Samrajya Lakshmi Yeruva</strong> is an accomplished researcher and biotechnologist specializing in bio-nanotechnology, targeted drug delivery, and reproductive biology. She is widely recognized for pioneering work in bio-inspired nanomedicine — particularly the development of lactoferrin-based nanoparticles for the safe and effective delivery of antiretroviral (ARV) drugs and microbicides.
+    </p>
+    <p>
+      During her doctoral research at the <strong>University of Hyderabad</strong>, she developed advanced nanoformulations that significantly enhanced the bioavailability, biodistribution, and pharmacokinetic performance of HIV/AIDS therapies such as Zidovudine (AZT), while substantially reducing toxic side effects without compromising antiviral efficacy.
+    </p>
+    <p>
+      Her scientific contributions include highly cited peer-reviewed publications in leading journals such as <em>Scientific Reports</em> and <em>Pharmaceutical Research</em>, with a strong focus on innovative combination therapies and translational solutions to combat complex viral diseases.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TEAM -->
+<section id="team" class="section">
+  <div class="section-header center fade-up">
+    <p class="section-tag">Team</p>
+    <h2 class="section-title">Meet Our Experts</h2>
+  </div>
+
+  <div class="team-grid">
+    <div class="team-card fade-up" style="transition-delay:.05s">
+      <div class="team-avatar">L</div>
+      <div class="team-name">Dr. Lakshmi S. Yeruva</div>
+      <div class="team-role">Founder</div>
+      <p class="team-bio">Ph.D. in Biotechnology, University of Hyderabad. Expert in bio-nanotechnology, drug delivery, and translational biomedical research.</p>
+    </div>
+
+    <div class="team-card fade-up" style="transition-delay:.1s">
+      <div class="team-avatar">B</div>
+      <div class="team-name">Dr. Bhimesh Reddy, MBBS</div>
+      <div class="team-role">Advisor, General Medicine & Procedures</div>
+      <p class="team-bio">MBBS in General Medicine — providing clinical expertise and medical advisory support across healthcare initiatives.</p>
+    </div>
+
+    <div class="team-card fade-up" style="transition-delay:.15s">
+      <div class="team-avatar">S</div>
+      <div class="team-name">Dr. B.V. Sudharani, MDS</div>
+      <div class="team-role">Advisor & Consultant, Dental Procedures</div>
+      <p class="team-bio">Endodontist specialist supporting dental health procedures, clinical workflows, and patient-centered care solutions.</p>
+    </div>
+
+    <div class="team-card fade-up" style="transition-delay:.2s">
+      <div class="team-avatar">K</div>
+      <div class="team-name">Dr. P. Kameshwara Rao</div>
+      <div class="team-role">Advisor, Filtration Technology</div>
+      <p class="team-bio">Ph.D. in Filtration Technology, IIT Delhi. Expert in filtration systems, contamination control, airborne particles, and clean environment optimization.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-block fade-up">
+    <p class="section-tag" style="margin-bottom:.75rem;">Get In Touch</p>
+    <h2 class="contact-title">Let's Build Impact Together</h2>
+    <p class="contact-lead">Connect with SciTatva to transform scientific insight into measurable outcomes.</p>
+    <a href="mailto:scitatva@gmail.com" class="email-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/>
+      </svg>
+      scitatva@gmail.com
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-quote">"From Scientific Insight to Real-World Impact."</p>
+  <p class="footer-copy">© 2026 SciTatva Insights. All rights reserved.</p>
+</footer>
+
+<script>
+  // Mobile menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', isOpen);
+    // Animate bars
+    const bars = hamburger.querySelectorAll('span');
+    if (isOpen) {
+      bars[0].style.cssText = 'transform: rotate(45deg) translate(5px, 5px)';
+      bars[1].style.cssText = 'opacity: 0; transform: scaleX(0)';
+      bars[2].style.cssText = 'transform: rotate(-45deg) translate(5px, -5px)';
+    } else {
+      bars.forEach(b => b.style.cssText = '');
+    }
+  });
+
+  // Close mobile menu when a link is clicked
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+      hamburger.querySelectorAll('span').forEach(b => b.style.cssText = '');
+    });
+  });
+
+  // Scroll-based fade-up animations
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }),
+    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+  );
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
